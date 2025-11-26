@@ -1,6 +1,16 @@
 import pgzero, pgzrun, pygame, sys
 from random import choice, randint, random
 from enum import Enum
+from pgzero.actor import Actor
+import pgzero.music
+from pgzero.loaders import images, sounds
+
+# Music path
+pgzero.music.searchpath = ["assets/music"]
+# Image path
+images.subpath = "assets/images"
+# Sound path
+sounds.subpath = "assets/sounds"
 
 # Check Python version number. sys.version_info gives version as a tuple, e.g. if (3,7,2,'final',0) for version 3.7.2.
 # Unlike many languages, Python can compare two tuples in the same way that you can compare numbers.
@@ -17,6 +27,7 @@ pgzero_version = [int(s) if s.isnumeric() else s for s in pgzero.__version__.spl
 if pgzero_version < [1,2]:
     print("This game requires at least version 1.2 of Pygame Zero. You have version {0}. Please upgrade using the command 'pip3 install --upgrade pgzero'".format(pgzero.__version__))
     sys.exit()
+
 
 WIDTH = 480
 HEIGHT = 800
