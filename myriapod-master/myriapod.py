@@ -112,11 +112,9 @@ def draw():
 
 # Set up music on game start
 try:
-    pygame.mixer.quit()
-    pygame.mixer.init(44100, -16, 2, 1024)
-
-    music.play("theme")
-    music.set_volume(0.4)
+    pygame.mixer.music.load("assets\\music\\theme.ogg")
+    pygame.mixer.music.play()
+    pygame.mixer.music.set_volume(0.4)
 except:
     # If an error occurs, just ignore it
     pass
