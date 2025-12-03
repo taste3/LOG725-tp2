@@ -6,6 +6,7 @@ from systems.state import State
 from systems.game import Game
 from entities.player import Player
 import systems.world as world
+from constants import WIDTH, HEIGHT, TITLE
 
 # Music path
 pgzero.music.searchpath = ["assets/music"]
