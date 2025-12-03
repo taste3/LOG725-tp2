@@ -1,6 +1,6 @@
 <div style='text-align: center; line-height:3rem; font-size:1.5rem; font-weight: 500; font-family: Calibri;'>
 <div style="height:60px;"></div>
-LOG725-tp1
+Travail Pratique 2
 <div style="height:80px;"></div>
 par
 <div style="height:80px;"></div>
@@ -10,7 +10,7 @@ DEVOIR PRÉSENTÉ À Loïc CYR
 <div style="height:80px;"></div>
 LOG725-01
 <div style="height:110px;"></div>
-MONTRÉAL, LE 2 OCTOBRE 2025
+MONTRÉAL, LE 4 DÉCEMBRE 2025
 <div style="height:80px;"></div>
 ÉCOLE DE TECHNOLOGIE SUPÉRIEURE
 <div style="height:0px;"></div>
@@ -20,10 +20,10 @@ UNIVERSITÉ DU QUÉBEC
 
 # Présentation
 
-Pour ce travail j'ai utilisé le moteur de jeu Unity version 6000.0.32f1. Il n'y a pas de dépendances à installer avant de lancer le jeu.
-Le travail est accessible sur mon répertoire git (en privé): <a href="https://github.com/taste3/LOG725-tp1">https://github.com/taste3/LOG725-tp1</a>.
+Pour ce travail, j'ai fait un réusinage du projet "Myriapod" que j'ai trouvé dans un des Repo GitHub recommendé dans l'énoncé du travail: <a href="https://github.com/Wireframe-Magazine/Code-the-Classics">https://github.com/Wireframe-Magazine/Code-the-Classics</a>
+Le travail est accessible sur mon répertoire git (publique): <a href="https://github.com/taste3/LOG725-tp2">https://github.com/taste3/LOG725-tp2</a>. Dans ce jeu, on contrôle un petit robot et on tire sur des roches et sur un myriapode (mille-pattes) robotisé.
 
-Pour lancer le jeu, il suffit de lancer l'exécutable: LOG725-tp1\Build\LOG725-tp1.exe
+Les instructions pour lancer le jeu sont disponible dans le fichier README du projet et sont lisibles sur la page d'accueil de mon GitHub.
 
 # Diagramme de classes
 
