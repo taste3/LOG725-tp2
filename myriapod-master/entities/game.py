@@ -5,8 +5,9 @@ from entities.explosion import Explosion
 from entities.segment import Segment
 from entities.rock import Rock
 from random import randint, random
-import systems.world as world
+from systems.gamestate import GameState
 from pgzero.builtins import sounds
+from systems.soundsystem import play_sound
 
 class Game:
     def __init__(self, screen, player=None):
@@ -126,7 +127,7 @@ class Game:
                         break
             else:
                 # New wave and enough rocks - create a new myriapod
-                world.game.play_sound("wave")
+                play_sound("wave")
                 self.wave += 1
                 self.time = 0
                 self.segments = []
@@ -172,21 +173,4 @@ class Game:
         for obj in all_objs:
             if obj:
                 obj.draw()
-
-    def play_sound(self, name, count=1):
-        # Some sounds have multiple varieties. If count > 1, we'll randomly choose one from those
-        # We don't play any sounds if there is no player (e.g. if we're on the menu)
-        if self.player:
-            try:
-                # Pygame Zero allows you to write things like 'sounds.explosion.play()'
-                # This automatically loads and plays a file named 'explosion.wav' (or .ogg) from the sounds folder (if
-                # such a file exists)
-                # But what if you have files named 'explosion0.ogg' to 'explosion5.ogg' and want to randomly choose
-                # one of them to play? You can generate a string such as 'explosion3', but to use such a string
-                # to access an attribute of Pygame Zero's sounds object, we must use Python's built-in function getattr
-                sound = getattr(sounds, name + str(randint(0, count - 1)))
-                sound.play()
-            except Exception as e:
-                # If no such sound file exists, print the name
-                print(e)
 

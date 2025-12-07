@@ -1,7 +1,7 @@
 from pgzero.actor import Actor
 from constants import *
 from utils import is_horizontal, inverse_direction, cell2pos
-import systems.world as world
+from systems.gamestate import GameState
 
 # SEGMENT MOVEMENT
 # The code below creates several constants used in the Segment class in relation to movement and directions
@@ -88,13 +88,13 @@ class Segment(Actor):
             if out or (new_cell_y == 0 and new_cell_x < 0):
                 rock = None
             else:
-                rock = world.game.grid[new_cell_y][new_cell_x]
+                rock = GameState.game.grid[new_cell_y][new_cell_x]
 
             rock_present = rock != None
 
             # Is new cell already occupied by another segment, or is another segment trying to enter my cell from
             # the opposite direction?
-            occupied_by_segment = (new_cell_x, new_cell_y) in world.game.occupied or (self.cell_x, self.cell_y, proposed_out_edge) in world.game.occupied
+            occupied_by_segment = (new_cell_x, new_cell_y) in GameState.game.occupied or (self.cell_x, self.cell_y, proposed_out_edge) in GameState.game.occupied
 
             # Prefer to move horizontally, unless there's a rock in the way.
             # If there are rocks both horizontally and vertically, prefer to move vertically
@@ -116,7 +116,7 @@ class Segment(Actor):
         # Segments take either 16 or 8 frames to pass through each grid cell, depending on the amount by which
         # game.time is updated each frame. phase will be a number between 0 and 15 indicating where we're at
         # in that cycle.
-        phase = world.game.time % 16
+        phase = GameState.game.time % 16
 
         if phase == 0:
             # At this point, the segment is entering a new grid cell. We first update our current grid cell coordinates.
@@ -130,7 +130,7 @@ class Segment(Actor):
             # During normal gameplay, once a segment reaches the bottom of the screen, it starts moving up again.
             # Once it reaches row 18, it starts moving down again, so that it remains a threat to the player.
             # During the title screen, we allow segments to go all the way back up to the top of the screen.
-            if self.cell_y == (18 if world.game.player else 0):
+            if self.cell_y == (18 if GameState.game.player else 0):
                 self.disallow_direction = DIRECTION_UP
             if self.cell_y == num_grid_rows-1:
                 self.disallow_direction = DIRECTION_DOWN
@@ -157,14 +157,14 @@ class Segment(Actor):
             
             # Destroy any rock that might be in the new cell
             if new_cell_x >= 0 and new_cell_x < num_grid_cols:
-                world.game.damage(new_cell_x, new_cell_y, 5)
+                GameState.game.damage(new_cell_x, new_cell_y, 5)
 
             # Set new cell as occupied. It's a case of whichever segment is processed first, gets first dibs on a cell
             # The second line deals with the case where two segments are moving towards each other and are in
             # neighbouring cells. It allows a segment to tell if another segment trying to enter its cell from
             # the opposite direction
-            world.game.occupied.add((new_cell_x, new_cell_y))
-            world.game.occupied.add((new_cell_x, new_cell_y, inverse_direction(self.out_edge)))
+            GameState.game.occupied.add((new_cell_x, new_cell_y))
+            GameState.game.occupied.add((new_cell_x, new_cell_y, inverse_direction(self.out_edge)))
 
         # turn_idx tells us whether the segment is going to be making a 90 degree turn in the current cell, or moving
         # in a straight line. 1 = anti-clockwise turn, 2 = straight ahead, 3 = clockwise turn, 0 = leaving through same

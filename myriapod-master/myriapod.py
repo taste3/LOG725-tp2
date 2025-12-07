@@ -3,10 +3,10 @@ import pgzero.music
 from pgzero.loaders import images, sounds
 from pgzero.keyboard import keyboard
 from systems.state import State
-from systems.game import Game
+from entities.game import Game
 from entities.player import Player
-import systems.world as world
 from constants import WIDTH, HEIGHT, TITLE
+from systems.gamestate import GameState
 
 # Music path
 pgzero.music.searchpath = ["assets/music"]
@@ -53,48 +53,48 @@ def space_pressed():
 def update():
     global state
 
-    if world.game is None:
-        world.game = Game(screen)
+    if GameState.game is None:
+        GameState.create_game(Game(screen))
 
     if state == State.MENU:
         if space_pressed():
             state = State.PLAY
-            world.game = Game(screen, Player((240, 768)))  # Create new Game object, with a Player object
+            GameState.create_game(Game(screen, Player((240, 768))))  # Create new Game object, with a Player object
 
-        world.game.update()
+        GameState.game.update()
 
     elif state == State.PLAY:
-        if world.game.player.lives == 0 and world.game.player.timer == 100:
+        if GameState.game.player.lives == 0 and GameState.game.player.timer == 100:
             sounds.gameover.play()
             state = State.GAME_OVER
         else:
-            world.game.update()
+            GameState.game.update()
 
     elif state == State.GAME_OVER:
         if space_pressed():
             # Switch to menu state, and create a new game object without a player
             state = State.MENU
-            world.game = Game(screen)
+            GameState.create_game(Game(screen))
 
 def draw():
     # Draw the game, which covers both the game during gameplay but also the game displaying in the background
     # during the main menu and game over screens
-    world.game.draw()
+    GameState.game.draw()
 
     if state == State.MENU:
         # Display logo
         screen.blit("title", (0, 0))
 
         # 14 frames of animation for "Press space to start", updating every 4 frames
-        screen.blit("space" + str((world.game.time // 4) % 14), (0, 420))
+        screen.blit("space" + str((GameState.game.time // 4) % 14), (0, 420))
 
     elif state == State.PLAY:
         # Display number of lives
-        for i in range(world.game.player.lives):
+        for i in range(GameState.game.player.lives):
             screen.blit("life", (i*40+8, 4))
 
         # Display score
-        score = str(world.game.score)
+        score = str(GameState.game.score)
         for i in range(1, len(score)+1):
             # In Python, a negative index into a list (or in this case, into a string) gives you items in reverse order,
             # e.g. 'hello'[-1] gives 'o', 'hello'[-2] gives 'l', etc.

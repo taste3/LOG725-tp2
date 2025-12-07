@@ -2,8 +2,8 @@ from pgzero.actor import Actor
 from entities.bullet import Bullet
 from entities.explosion import Explosion
 from pgzero.builtins import keyboard
-import systems.world as world
-
+from systems.gamestate import GameState
+from systems.soundsystem import play_sound
 
 class Player(Actor):
 
@@ -34,7 +34,7 @@ class Player(Actor):
         # how many pixels we should move in the specified direction.
         for i in range(speed):
             # For each pixel we want to move, we must first check if it's a valid place to move to
-            if world.game.allow_movement(self.x + dx, self.y + dy):
+            if GameState.game.allow_movement(self.x + dx, self.y + dy):
                 self.x += dx
                 self.y += dy
 
@@ -121,15 +121,15 @@ class Player(Actor):
             if self.fire_timer < 0 and (self.frame > 0 or keyboard.space):
                 if self.frame == 0:
                     # Create a bullet
-                    world.game.play_sound("laser")
-                    world.game.bullets.append(Bullet((self.x, self.y - 8)))
+                    play_sound("laser")
+                    GameState.game.bullets.append(Bullet((self.x, self.y - 8)))
                 self.frame = (self.frame + 1) % 3
                 self.fire_timer = Player.RELOAD_TIME
 
             # Check to see if any enemy segments collide with the player, as well as the flying enemy.
             # We create a list consisting of all enemy segments, and append another list containing only the
             # flying enemy.
-            all_enemies = world.game.segments + [world.game.flying_enemy]
+            all_enemies = GameState.game.segments + [GameState.game.flying_enemy]
             for enemy in all_enemies:
                 # The flying enemy might not exist, in which case its value
                 # will be None. We cannot call a method or access any attributes
@@ -138,8 +138,8 @@ class Player(Actor):
                 if enemy and enemy.collidepoint(self.pos):
                     # Collision has occurred, check to see whether player is invulnerable
                     if self.timer > Player.INVULNERABILITY_TIME:
-                        world.game.play_sound("player_explode")
-                        world.game.explosions.append(Explosion(self.pos, 1))
+                        play_sound("player_explode")
+                        GameState.game.explosions.append(Explosion(self.pos, 1))
                         self.alive = False
                         self.timer = 0
                         self.lives -= 1
@@ -151,7 +151,7 @@ class Player(Actor):
                 self.alive = True
                 self.timer = 0
                 self.pos = (240, 768)
-                world.game.clear_rocks_for_respawn(*self.pos)     # Ensure there are no rocks at the player's respawn position
+                GameState.game.clear_rocks_for_respawn(*self.pos)     # Ensure there are no rocks at the player's respawn position
 
         # Display the player sprite if alive - BUT, if player is currently invulnerable, due to having just respawned,
         # switch between showing and not showing the player sprite on alternate frames

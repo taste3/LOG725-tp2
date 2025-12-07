@@ -3,7 +3,8 @@ from random import randint
 from constants import CENTRE_ANCHOR
 from utils import cell2pos
 from entities.explosion import Explosion
-import systems.world as world
+from systems.gamestate import GameState
+from systems.soundsystem import play_sound
 
 class Rock(Actor):
     def __init__(self, x, y, totem=False):
@@ -15,7 +16,7 @@ class Rock(Actor):
 
         if totem:
             # Totem rocks take five hits and give bonus points
-            world.game.play_sound("totem_create")
+            play_sound("totem_create")
             self.health = 5
             self.show_health = 5
         else:
@@ -31,15 +32,15 @@ class Rock(Actor):
         # player's respawn location. Points can be earned by hitting special "totem" rocks, which have 5 health, but
         # this should only happen when they are hit by a bullet.
         if damaged_by_bullet and self.health == 5:
-            world.game.play_sound("totem_destroy")
-            world.game.score += 100
+            play_sound("totem_destroy")
+            GameState.game.score += 100
         else:
             if amount > self.health - 1:
-                world.game.play_sound("rock_destroy")
+                play_sound("rock_destroy")
             else:
-                world.game.play_sound("hit", 4)
+                play_sound("hit", 4)
 
-        world.game.explosions.append(Explosion(self.pos, 2 * (self.health == 5)))
+        GameState.game.explosions.append(Explosion(self.pos, 2 * (self.health == 5)))
         self.health -= amount
         self.show_health = self.health
 
@@ -59,6 +60,6 @@ class Rock(Actor):
             # Totem rocks turn into normal rocks if not shot within 200 frames
             self.damage(1)
 
-        colour = str(max(world.game.wave, 0) % 3)
+        colour = str(max(GameState.game.wave, 0) % 3)
         health = str(max(self.show_health - 1, 0))
         self.image = "rock" + colour + str(self.type) + health
