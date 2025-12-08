@@ -1,0 +1,16 @@
+@startuml
+
+class Entity
+class ActorComponent
+class BulletData
+class RigidBody
+class BulletSystem
+class Game
+
+Entity --> ActorComponent
+Entity --> BulletData
+Entity --> RigidBody
+BulletSystem --> Entity : has multiple
+Game --> BulletSystem : updates
+
+@enduml

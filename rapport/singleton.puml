@@ -1,0 +1,21 @@
+@startuml
+
+class Game {
+    + update()
+    + draw()
+}
+
+class GameState {
+    + instance
+}
+
+GameState --> Game
+
+Bullet --> GameState
+Explosion --> GameState
+FlyingEnemy --> GameState
+Player --> GameState
+Rock --> GameState
+Segment --> GameState
+
+@enduml
