@@ -64,12 +64,14 @@ Pour éviter de refactoriser le jeu en entier, j'ai implémenté la patron Singl
 # 2. Patron Observateur
 
 #### Relation avec le contexte du jeu
+Le package pgzero contient un module keyboard qui permet de très facilement accéder aux touches qui sont appuyés sur le clavier en temps réel. Par contre
+
 #### Avantages et inconvénients
 
 
 #### Sans le patron Observer
 ![Sans le patron Observer](images/without_observer.png)
-<p align="center"><em>Figure X : Description</em></p>
+<p align="center"><em>Figure X : Méthode space_pressed</em></p>
 
 #### Avec le patron Observer
 ![Avec le patron Observer](images/with_observer.png)

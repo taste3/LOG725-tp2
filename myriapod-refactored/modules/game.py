@@ -8,6 +8,7 @@ from random import randint, random
 from systems.game_state import GameState
 from pgzero.builtins import sounds
 from systems.sound_system import play_sound
+from ecs.systems.bullet_system import BulletSystem
 
 class Game:
     def __init__(self, screen, player=None):
@@ -28,6 +29,9 @@ class Game:
         self.flying_enemy = None
 
         self.score = 0
+
+        #On initialise les systèmes
+        BulletSystem()
 
     def damage(self, cell_x, cell_y, amount, from_bullet=False):
         # Find the rock at this grid cell (or None if no rock here)
@@ -89,13 +93,18 @@ class Game:
         # Call update method on all objects. grid is a list of lists, equivalent to a 2-dimensional array,
         # so sum can be used to produce a single list containing all grid objects plus the contents of the other
         # Actor lists. The player and flying enemy, which are object references rather than lists, are appended as single-item lists.
-        all_objects = sum(self.grid, self.bullets + self.segments + self.explosions + [self.player] + [self.flying_enemy])
+        
+        # Tout les objets qui ne sont pas ECS
+        all_objects = sum(self.grid, self.segments + self.explosions + [self.player] + [self.flying_enemy])
         for obj in all_objects:
             if obj:
                 obj.update()
 
+        # On met à jour les systèmes ECS
+        BulletSystem.instance.update()
+
         # Recreate the bullets list, which will contain all existing bullets except those which have gone off the screen or have hit something
-        self.bullets = [b for b in self.bullets if b.y > 0 and not b.done]
+        #self.bullets = [b for b in self.bullets if b.y > 0 and not b.done]
 
         # Recreate the explosions list, which will contain all existing explosions except those which have completed their animations
         self.explosions = [e for e in self.explosions if not e.timer == 31]
@@ -151,7 +160,7 @@ class Game:
 
         # Create a list of all grid locations and other objects which need to be drawn
         # (Most grid locations will be set to None as they are unoccupied, hence the check "if obj:" further down)
-        all_objs = sum(self.grid, self.bullets + self.segments + self.explosions + [self.player])
+        all_objs = sum(self.grid, self.segments + self.explosions + [self.player])
 
         # We want to draw objects in order based on their Y position. Objects further down the screen should be drawn
         # after (and therefore in front of) objects higher up the screen. We can use Python's built-in sort function
@@ -174,3 +183,4 @@ class Game:
             if obj:
                 obj.draw()
 
+        BulletSystem.instance.draw()

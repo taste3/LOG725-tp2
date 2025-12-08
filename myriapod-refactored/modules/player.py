@@ -1,9 +1,11 @@
 from pgzero.actor import Actor
-from modules.bullet import Bullet
+#from modules.bullet import Bullet
 from modules.explosion import Explosion
 from pgzero.builtins import keyboard
 from systems.game_state import GameState
 from systems.sound_system import play_sound
+
+from ecs.systems.bullet_system import BulletSystem
 
 class Player(Actor):
 
@@ -122,7 +124,9 @@ class Player(Actor):
                 if self.frame == 0:
                     # Create a bullet
                     play_sound("laser")
-                    GameState.game.bullets.append(Bullet((self.x, self.y - 8)))
+
+                    BulletSystem.instance.shoot_bullet(self.x, self.y)
+
                 self.frame = (self.frame + 1) % 3
                 self.fire_timer = Player.RELOAD_TIME
 
