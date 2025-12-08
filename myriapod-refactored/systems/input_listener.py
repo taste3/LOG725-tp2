@@ -1,21 +1,30 @@
 from pgzero.keyboard import keyboard
+import pygame
 
 # Cette classe représente le "Publisher" dans le Patron Observer
+# Cette classe est également un Singleton
 class InputListener:
+
+    instance = None
     def __init__(self):
-        self.observers = {}
+        InputListener.instance = self
+        # les observateurs une liste de Tuple (code de la touche, callback )
+        self.observers = []
         self.previous = set()
         self.current = set()
     
     def update(self):
-        self.current = {k for k, v in keyboard.__dict__.items() if v}
-        for observer in self.observers:
-            observer_key = observer.key
-            return key in self.current and key not in self.previous
+        self.current = set(keyboard._pressed)
+        # touches qui viennent d'être appuyées
+        new_keypresses = self.current - self.previous
+        for touche, callback in self.observers:
+            if touche in new_keypresses:
+                # on exécute le callback
+                callback()
 
-    def add_observer(key: str, ):
-        pass
+        self.previous = self.current.copy()
+                
 
-    def pressed(self, key):
-        """Edge: key was NOT down but is NOW down."""
-        
+    def bind(self, key: str, method: callable):
+        keycode = pygame.key.key_code(key)
+        self.observers.append((keycode, method))

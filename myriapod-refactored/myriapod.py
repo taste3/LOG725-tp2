@@ -7,6 +7,7 @@ from modules.game import Game
 from modules.player import Player
 from constants import WIDTH, HEIGHT, TITLE
 from systems.game_state import GameState
+from systems.input_listener import InputListener
 
 # Music path
 pgzero.music.searchpath = ["assets/music"]
@@ -27,40 +28,27 @@ sounds.subpath = "assets/sounds"
 
 
 
-# Is the space bar currently being pressed down?
-space_down = False
+def on_space_pressed():
+    global state
 
-# Has the space bar just been pressed? i.e. gone from not being pressed, to being pressed
-def space_pressed():
-    global space_down
-    if keyboard.space:
-        if space_down:
-            # Space was down previous frame, and is still down
-            return False
-        else:
-            # Space wasn't down previous frame, but now is
-            space_down = True
-            return True
-    else:
-        space_down = False
-        return False
+    if state == State.MENU:
+        state = State.PLAY
+        GameState.create_game(Game(screen, Player((240, 768))))
+
+    elif state == State.GAME_OVER:
+        state = State.MENU
+        GameState.create_game(Game(screen))
 
 
 # Pygame Zero calls the update and draw functions each frame
-
-
-
 def update():
     global state
+    InputListener.instance.update()
 
     if GameState.game is None:
         GameState.create_game(Game(screen))
 
     if state == State.MENU:
-        if space_pressed():
-            state = State.PLAY
-            GameState.create_game(Game(screen, Player((240, 768))))  # Create new Game object, with a Player object
-
         GameState.game.update()
 
     elif state == State.PLAY:
@@ -69,12 +57,6 @@ def update():
             state = State.GAME_OVER
         else:
             GameState.game.update()
-
-    elif state == State.GAME_OVER:
-        if space_pressed():
-            # Switch to menu state, and create a new game object without a player
-            state = State.MENU
-            GameState.create_game(Game(screen))
 
 def draw():
     # Draw the game, which covers both the game during gameplay but also the game displaying in the background
@@ -123,8 +105,9 @@ def launch():
         sys.exit()
 
     state = State.MENU
+    InputListener()
+    InputListener.instance.bind("space", on_space_pressed)
     play_music()
     pgzrun.go()
-
 
 launch()
